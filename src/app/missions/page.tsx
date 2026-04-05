@@ -21,7 +21,7 @@ export default function MissionsPage() {
       : missions.filter((m) => m.category === filter);
 
   return (
-    <div className="min-h-screen px-4 md:px-8 py-12">
+    <div className="min-h-screen px-4 md:px-8 lg:pr-12 py-12">
       {/* Header */}
       <motion.div
         className="mb-8"

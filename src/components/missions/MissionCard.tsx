@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { Mission } from "@/types/mission";
 import { StatusIndicator } from "@/components/hud/StatusIndicator";
+import { useSound } from "@/hooks/useSound";
 
 interface MissionCardProps {
   mission: Mission;
@@ -11,6 +12,7 @@ interface MissionCardProps {
 }
 
 export function MissionCard({ mission, index, onClick }: MissionCardProps) {
+  const { play } = useSound();
   const statusMap = {
     COMPLETE: "online" as const,
     ACTIVE: "standby" as const,
@@ -23,7 +25,7 @@ export function MissionCard({ mission, index, onClick }: MissionCardProps) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1, duration: 0.4 }}
-      onClick={onClick}
+      onClick={() => { play("select"); onClick(); }}
       whileHover={{ scale: 1.01 }}
     >
       {/* Top row */}

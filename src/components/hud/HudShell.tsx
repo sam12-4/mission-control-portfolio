@@ -6,6 +6,7 @@ import { Navigation } from "./Navigation";
 import { ScanLineOverlay } from "./ScanLineOverlay";
 import { GridOverlay } from "./GridOverlay";
 import { CornerElements } from "./CornerElements";
+import { Cursor } from "./Cursor";
 import { useStation } from "@/providers/StationProvider";
 
 interface HudShellProps {
@@ -26,6 +27,7 @@ export function HudShell({ children }: HudShellProps) {
       <CornerElements />
       <ScanLineOverlay />
       <GridOverlay />
+      <Cursor />
       <main className="relative z-10 pt-10 lg:pl-48">
         {children}
       </main>

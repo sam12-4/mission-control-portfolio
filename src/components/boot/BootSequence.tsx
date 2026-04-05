@@ -6,6 +6,7 @@ import { bootMessages } from "@/data/boot-messages";
 import { TerminalLine } from "./TerminalLine";
 import { ProgressBar } from "./ProgressBar";
 import { useStation } from "@/providers/StationProvider";
+import { audioEngine } from "@/lib/audio-engine";
 
 export function BootSequence() {
   const { dispatch } = useStation();
@@ -15,6 +16,7 @@ export function BootSequence() {
 
   const completeBoot = useCallback(() => {
     setPhase("completing");
+    audioEngine.play("bootComplete");
     setTimeout(() => {
       setPhase("done");
       sessionStorage.setItem("bootComplete", "true");
@@ -40,10 +42,14 @@ export function BootSequence() {
       setTimeout(() => setShowProgress(true), 800)
     );
 
+    audioEngine.resetBootPitch();
     bootMessages.forEach((msg, i) => {
       cumulativeDelay += msg.delay + 100;
       lineTimers.push(
-        setTimeout(() => setVisibleLines(i + 1), cumulativeDelay)
+        setTimeout(() => {
+          setVisibleLines(i + 1);
+          audioEngine.play("bootBeep");
+        }, cumulativeDelay)
       );
     });
 

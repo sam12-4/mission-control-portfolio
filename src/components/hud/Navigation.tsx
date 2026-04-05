@@ -5,10 +5,12 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { navItems } from "@/data/navigation";
 import { useState } from "react";
+import { useSound } from "@/hooks/useSound";
 
 export function Navigation() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { play } = useSound();
 
   const currentSection = navItems.find((item) => {
     if (item.href === "/") return pathname === "/";
@@ -23,7 +25,7 @@ export function Navigation() {
           {navItems.map((item, i) => {
             const isActive = currentSection?.id === item.id;
             return (
-              <Link key={item.id} href={item.href}>
+              <Link key={item.id} href={item.href} onClick={() => play("navClick")}>
                 <motion.div
                   className={`relative flex items-center gap-3 px-3 py-2.5 text-[11px] font-mono tracking-wider transition-colors group ${
                     isActive
@@ -62,7 +64,7 @@ export function Navigation() {
 
       {/* Mobile nav toggle */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => { setIsOpen(!isOpen); play("navClick"); }}
         className="fixed top-0 right-0 z-50 lg:hidden h-10 w-10 flex items-center justify-center text-cyan"
         aria-label="Toggle navigation"
       >
@@ -96,7 +98,7 @@ export function Navigation() {
           {navItems.map((item, i) => {
             const isActive = currentSection?.id === item.id;
             return (
-              <Link key={item.id} href={item.href} onClick={() => setIsOpen(false)}>
+              <Link key={item.id} href={item.href} onClick={() => { setIsOpen(false); play("navClick"); }}>
                 <motion.div
                   className={`text-center py-3 text-sm font-mono tracking-[0.3em] ${
                     isActive ? "text-cyan text-glow-cyan" : "text-text-dim"

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CommandInput } from "./CommandInput";
 import { HudButton } from "@/components/ui/HudButton";
+import { audioEngine } from "@/lib/audio-engine";
 
 type FormStatus = "idle" | "sending" | "sent" | "error";
 
@@ -19,10 +20,12 @@ export function TransmissionForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("sending");
+    audioEngine.play("transmit");
 
     // Simulate send — replace with actual API call
     await new Promise((resolve) => setTimeout(resolve, 2000));
     setStatus("sent");
+    audioEngine.play("success");
 
     setTimeout(() => {
       setStatus("idle");

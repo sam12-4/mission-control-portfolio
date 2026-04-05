@@ -4,6 +4,7 @@ import { useRef, useEffect, useCallback } from "react";
 import { missions } from "@/data/missions";
 import { COLORS } from "@/lib/constants";
 import type { Mission } from "@/types/mission";
+import { audioEngine } from "@/lib/audio-engine";
 
 interface RadarMapProps {
   onSelectMission: (mission: Mission | null) => void;
@@ -179,6 +180,7 @@ export function RadarMap({ onSelectMission, selectedMission, filter }: RadarMapP
       }
     }
 
+    if (clicked) audioEngine.play("radarPing");
     onSelectMission(clicked);
   }
 

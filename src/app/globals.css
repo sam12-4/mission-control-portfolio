@@ -24,6 +24,13 @@
   --font-mono: var(--font-jetbrains);
 }
 
+/* Hide default cursor on hover-capable devices */
+@media (hover: hover) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 /* Base styles */
 html {
   scrollbar-width: thin;

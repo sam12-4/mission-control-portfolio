@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import type { Mission } from "@/types/mission";
 import { DataPanel } from "@/components/ui/DataPanel";
 import { HudButton } from "@/components/ui/HudButton";
+import { audioEngine } from "@/lib/audio-engine";
 
 interface MissionBriefProps {
   mission: Mission;
@@ -18,6 +20,15 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
         ? "text-amber"
         : "text-purple";
 
+  useEffect(() => {
+    audioEngine.play("panelOpen");
+  }, []);
+
+  function handleClose() {
+    audioEngine.play("panelClose");
+    onClose();
+  }
+
   return (
     <>
       {/* Backdrop */}
@@ -26,7 +37,7 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        onClick={onClose}
+        onClick={handleClose}
       />
       {/* Panel */}
       <motion.div
@@ -36,17 +47,17 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
         exit={{ x: "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="p-6">
+        <div className="p-6 pt-14">
         {/* Close button */}
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-text-dim hover:text-cyan text-xs font-mono tracking-wider"
         >
           [CLOSE]
         </button>
 
         {/* Header */}
-        <div className="mb-6 pt-2">
+        <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
             <span className={`text-[10px] font-mono ${statusColor} tracking-wider`}>
               {mission.status}

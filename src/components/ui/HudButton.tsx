@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { type ReactNode } from "react";
+import { useSound } from "@/hooks/useSound";
 
 interface HudButtonProps {
   children: ReactNode;
@@ -28,12 +29,13 @@ export function HudButton({
       "border border-text-dim/30 text-text-dim hover:text-text hover:border-text-dim/60",
   };
 
+  const { play } = useSound();
   const Component = href ? motion.a : motion.button;
 
   return (
     <Component
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
-      onClick={onClick}
+      onClick={() => { play("select"); onClick?.(); }}
       href={href}
       target={href ? "_blank" : undefined}
       rel={href ? "noopener noreferrer" : undefined}

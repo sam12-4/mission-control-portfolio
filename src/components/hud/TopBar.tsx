@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { StatusIndicator } from "./StatusIndicator";
+import { MuteToggle } from "./MuteToggle";
 import { STATION } from "@/lib/constants";
 
 export function TopBar() {
@@ -50,6 +51,7 @@ export function TopBar() {
 
       {/* Right section */}
       <div className="flex items-center gap-3 pr-10 lg:pr-0">
+        <MuteToggle />
         <span className="text-amber text-[10px] font-mono hidden sm:inline">
           SYS.TIME
         </span>

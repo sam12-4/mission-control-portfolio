@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import type { TechSystem } from "@/types/system";
 import { StatusIndicator } from "@/components/hud/StatusIndicator";
+import { useSound } from "@/hooks/useSound";
 
 interface TechModuleProps {
   system: TechSystem;
@@ -12,6 +13,7 @@ interface TechModuleProps {
 }
 
 export function TechModule({ system, index, isActive, onClick }: TechModuleProps) {
+  const { play } = useSound();
   const statusMap = {
     ONLINE: "online" as const,
     STANDBY: "standby" as const,
@@ -28,7 +30,7 @@ export function TechModule({ system, index, isActive, onClick }: TechModuleProps
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: index * 0.05, duration: 0.3 }}
-      onClick={onClick}
+      onClick={() => { play("select"); onClick(); }}
       data-system-id={system.id}
       whileHover={{ scale: 1.02 }}
     >

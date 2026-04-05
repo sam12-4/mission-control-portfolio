@@ -87,7 +87,7 @@ export function Navigation() {
 
       {/* Mobile nav overlay */}
       <motion.div
-        className="fixed inset-0 z-40 bg-void/95 backdrop-blur-md flex flex-col items-center justify-center lg:hidden"
+        className="fixed inset-0 z-40 bg-void/95 backdrop-blur-md flex flex-col items-center justify-center overflow-y-auto lg:hidden"
         initial={false}
         animate={isOpen ? { opacity: 1, pointerEvents: "auto" as const } : { opacity: 0, pointerEvents: "none" as const }}
         transition={{ duration: 0.3 }}

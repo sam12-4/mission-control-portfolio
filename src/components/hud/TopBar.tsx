@@ -42,7 +42,7 @@ export function TopBar() {
         <span className="text-text-dim text-[10px] font-mono hidden lg:inline">
           {STATION.sector}
         </span>
-        <span className="text-cyan/60 text-[10px] font-mono">|</span>
+        <span className="text-cyan/60 text-[10px] font-mono hidden sm:inline">|</span>
         <span className="text-text-dim text-[10px] font-mono">
           STATUS: <span className="text-green">{STATION.status}</span>
         </span>

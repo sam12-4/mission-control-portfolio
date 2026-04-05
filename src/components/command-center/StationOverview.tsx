@@ -58,7 +58,7 @@ const subsystems = [
 
 export function StationOverview() {
   return (
-    <section className="relative px-4 md:px-8 py-20">
+    <section className="relative px-4 md:px-8 py-12 md:py-20">
       {/* Section header */}
       <motion.div
         className="mb-12 text-center"
@@ -68,11 +68,11 @@ export function StationOverview() {
         transition={{ duration: 0.6 }}
       >
         <div className="flex items-center gap-3 justify-center mb-3">
-          <div className="w-16 h-[1px] bg-gradient-to-r from-transparent to-cyan/40" />
+          <div className="w-8 md:w-16 h-[1px] bg-gradient-to-r from-transparent to-cyan/40" />
           <span className="text-[10px] font-mono text-amber tracking-[0.3em]">
             STATION SUBSYSTEMS
           </span>
-          <div className="w-16 h-[1px] bg-gradient-to-l from-transparent to-cyan/40" />
+          <div className="w-8 md:w-16 h-[1px] bg-gradient-to-l from-transparent to-cyan/40" />
         </div>
         <h2 className="text-xl md:text-2xl font-display text-cyan tracking-[0.1em] text-glow-cyan">
           SYSTEM DIRECTORY
@@ -93,7 +93,7 @@ export function StationOverview() {
             transition={{ delay: i * 0.1, duration: 0.5 }}
           >
             <Link href={sub.href}>
-              <div className="border border-cyan/15 bg-panel/20 backdrop-blur-sm p-5 hover:border-cyan/40 hover:bg-panel/40 transition-all duration-300 group cursor-pointer h-full">
+              <div className="border border-cyan/15 bg-panel/20 backdrop-blur-sm p-3 md:p-5 hover:border-cyan/40 hover:bg-panel/40 transition-all duration-300 group cursor-pointer h-full">
                 {/* Top row */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -118,7 +118,7 @@ export function StationOverview() {
                 </p>
 
                 {/* Stats */}
-                <div className="flex gap-6 pt-3 border-t border-cyan/10">
+                <div className="flex flex-wrap gap-3 md:gap-6 pt-3 border-t border-cyan/10">
                   {sub.stats.map((stat) => (
                     <div key={stat.label}>
                       <span className="text-[8px] font-mono text-text-dim/50 tracking-wider block">
@@ -147,7 +147,7 @@ export function StationOverview() {
         <DataPanel title="STATION COMMANDER">
           <div className="flex flex-col md:flex-row items-start gap-6">
             {/* Profile photo */}
-            <div className="relative w-20 h-20 flex-shrink-0 border border-cyan/20 bg-panel overflow-hidden">
+            <div className="relative w-16 h-16 md:w-20 md:h-20 flex-shrink-0 border border-cyan/20 bg-panel overflow-hidden">
               <Image
                 src={profile.profileImage}
                 alt={profile.name}
@@ -173,10 +173,10 @@ export function StationOverview() {
               </p>
 
               {/* Quick stats */}
-              <div className="flex flex-wrap gap-6 mt-4 pt-3 border-t border-cyan/10">
+              <div className="flex flex-wrap gap-4 md:gap-6 mt-4 pt-3 border-t border-cyan/10">
                 {profile.stats.map((stat) => (
                   <div key={stat.label}>
-                    <span className="text-lg font-display text-cyan tabular-nums">
+                    <span className="text-base md:text-lg font-display text-cyan tabular-nums">
                       {stat.value.toLocaleString()}
                     </span>
                     <span className="text-[8px] font-mono text-text-dim/50 tracking-wider block mt-0.5">
@@ -192,11 +192,11 @@ export function StationOverview() {
 
       {/* Bottom decoration */}
       <div className="flex items-center justify-center mt-16 gap-3">
-        <div className="w-20 h-[1px] bg-gradient-to-r from-transparent to-cyan/20" />
+        <div className="w-10 md:w-20 h-[1px] bg-gradient-to-r from-transparent to-cyan/20" />
         <span className="text-[9px] font-mono text-text-dim/30 tracking-[0.3em]">
           END OF TRANSMISSION
         </span>
-        <div className="w-20 h-[1px] bg-gradient-to-l from-transparent to-cyan/20" />
+        <div className="w-10 md:w-20 h-[1px] bg-gradient-to-l from-transparent to-cyan/20" />
       </div>
     </section>
   );

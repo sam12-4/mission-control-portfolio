@@ -58,6 +58,27 @@ export function FloatingPanels() {
           </div>
         </motion.div>
       ))}
+
+      {/* Mobile compact status bar */}
+      <motion.div
+        className="absolute bottom-36 left-4 right-4 z-20 flex justify-between lg:hidden"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1, duration: 0.5 }}
+      >
+        <div className="border border-cyan/15 bg-panel/40 backdrop-blur-sm px-3 py-2">
+          <span className="text-[8px] font-mono text-cyan/50 tracking-[0.15em] block">SIGNAL</span>
+          <span className="text-xs font-mono text-text tabular-nums">98.7%</span>
+        </div>
+        <div className="border border-cyan/15 bg-panel/40 backdrop-blur-sm px-3 py-2">
+          <span className="text-[8px] font-mono text-cyan/50 tracking-[0.15em] block">MISSIONS</span>
+          <span className="text-xs font-mono text-text tabular-nums">3</span>
+        </div>
+        <div className="border border-cyan/15 bg-panel/40 backdrop-blur-sm px-3 py-2">
+          <span className="text-[8px] font-mono text-cyan/50 tracking-[0.15em] block">STATUS</span>
+          <span className="text-xs font-mono text-green tabular-nums">ONLINE</span>
+        </div>
+      </motion.div>
     </>
   );
 }

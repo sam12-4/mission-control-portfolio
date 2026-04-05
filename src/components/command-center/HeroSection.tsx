@@ -52,7 +52,7 @@ export function HeroSection() {
 
       {/* Bottom callsign */}
       <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 text-center"
+        className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-20 text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.6 }}
@@ -61,11 +61,11 @@ export function HeroSection() {
           {profile.stationDesignation}
         </div>
         <div className="flex items-center gap-2 justify-center">
-          <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-cyan/30" />
+          <div className="w-6 md:w-12 h-[1px] bg-gradient-to-r from-transparent to-cyan/30" />
           <span className="text-[10px] font-mono text-cyan/40 tracking-[0.3em]">
             SCROLL TO EXPLORE
           </span>
-          <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-cyan/30" />
+          <div className="w-6 md:w-12 h-[1px] bg-gradient-to-l from-transparent to-cyan/30" />
         </div>
         {/* Animated scroll indicator */}
         <motion.div

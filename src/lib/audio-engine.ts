@@ -18,6 +18,8 @@ class AudioEngine {
   private ambientGains: GainNode[] = [];
   private ambientRunning = false;
 
+  private ambientPending = false;
+
   constructor() {
     if (typeof window !== "undefined") {
       this.muted = localStorage.getItem("mc-sound-muted") === "true";
@@ -26,6 +28,19 @@ class AudioEngine {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         this.muted = true;
       }
+
+      // Listen for first user interaction to unlock audio and start pending ambient
+      const unlockAudio = () => {
+        if (this.ambientPending && !this.ambientRunning) {
+          this.startAmbient();
+        }
+        document.removeEventListener("click", unlockAudio);
+        document.removeEventListener("keydown", unlockAudio);
+        document.removeEventListener("touchstart", unlockAudio);
+      };
+      document.addEventListener("click", unlockAudio);
+      document.addEventListener("keydown", unlockAudio);
+      document.addEventListener("touchstart", unlockAudio);
     }
   }
 
@@ -48,14 +63,16 @@ class AudioEngine {
     if (typeof window !== "undefined") {
       localStorage.setItem("mc-sound-muted", String(this.muted));
     }
+    // Mute toggle only controls ambient background sound
     if (this.muted) {
       this.stopAmbient();
+    } else {
+      this.startAmbient();
     }
     return this.muted;
   }
 
   play(sound: SoundName): void {
-    if (this.muted) return;
 
     try {
       switch (sound) {
@@ -92,6 +109,12 @@ class AudioEngine {
       }
     } catch {
       // Silently fail — audio should never break the app
+    }
+
+    // If ambient was pending and context is now active, start it
+    if (this.ambientPending && !this.ambientRunning && !this.muted) {
+      this.ambientPending = false;
+      this.startAmbient();
     }
   }
 
@@ -217,63 +240,76 @@ class AudioEngine {
   startAmbient(): void {
     if (this.ambientRunning || this.muted) return;
 
+    // Mark as pending — will start once AudioContext is active
+    this.ambientPending = true;
+
+    // Check if context is ready
+    try {
+      const ctx = this.getContext();
+      if (ctx.state === "suspended") return; // Will start via unlock listener or play()
+    } catch {
+      return;
+    }
+
+    this.ambientPending = false;
+
     try {
       const ctx = this.getContext();
       this.ambientRunning = true;
 
-      const fadeTime = 3;
+      const fadeTime = 4;
 
-      // Layer 1: Engine drone (60Hz sine)
-      const drone = ctx.createOscillator();
-      const droneGain = ctx.createGain();
-      drone.type = "sine";
-      drone.frequency.value = 60;
-      droneGain.gain.setValueAtTime(0, ctx.currentTime);
-      droneGain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + fadeTime);
-      drone.connect(droneGain);
-      droneGain.connect(ctx.destination);
-      drone.start();
-      this.ambientNodes.push(drone);
-      this.ambientGains.push(droneGain);
+      // Layer 1: Ethereal pad — warm shimmer like holographic displays
+      const pad1 = ctx.createOscillator();
+      const pad1Gain = ctx.createGain();
+      pad1.type = "sine";
+      pad1.frequency.value = 174; // F3 — warm, not bassy
+      pad1Gain.gain.setValueAtTime(0, ctx.currentTime);
+      pad1Gain.gain.linearRampToValueAtTime(0.012, ctx.currentTime + fadeTime);
+      pad1.connect(pad1Gain);
+      pad1Gain.connect(ctx.destination);
+      pad1.start();
+      this.ambientNodes.push(pad1);
+      this.ambientGains.push(pad1Gain);
 
-      // Layer 2: Detuned harmonic (60.7Hz — creates slow beating)
-      const detuned = ctx.createOscillator();
-      const detunedGain = ctx.createGain();
-      detuned.type = "sine";
-      detuned.frequency.value = 60.7;
-      detunedGain.gain.setValueAtTime(0, ctx.currentTime);
-      detunedGain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + fadeTime);
-      detuned.connect(detunedGain);
-      detunedGain.connect(ctx.destination);
-      detuned.start();
-      this.ambientNodes.push(detuned);
-      this.ambientGains.push(detunedGain);
+      // Layer 2: Slight detune of pad — creates slow dreamy shimmer
+      const pad2 = ctx.createOscillator();
+      const pad2Gain = ctx.createGain();
+      pad2.type = "sine";
+      pad2.frequency.value = 174.8;
+      pad2Gain.gain.setValueAtTime(0, ctx.currentTime);
+      pad2Gain.gain.linearRampToValueAtTime(0.012, ctx.currentTime + fadeTime);
+      pad2.connect(pad2Gain);
+      pad2Gain.connect(ctx.destination);
+      pad2.start();
+      this.ambientNodes.push(pad2);
+      this.ambientGains.push(pad2Gain);
 
-      // Layer 3: Hull resonance (120Hz triangle)
-      const hull = ctx.createOscillator();
-      const hullGain = ctx.createGain();
-      hull.type = "triangle";
-      hull.frequency.value = 120;
-      hullGain.gain.setValueAtTime(0, ctx.currentTime);
-      hullGain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + fadeTime);
-      hull.connect(hullGain);
-      hullGain.connect(ctx.destination);
-      hull.start();
-      this.ambientNodes.push(hull);
-      this.ambientGains.push(hullGain);
+      // Layer 3: High crystalline tone — like distant data streams
+      const crystal = ctx.createOscillator();
+      const crystalGain = ctx.createGain();
+      crystal.type = "sine";
+      crystal.frequency.value = 523; // C5 — bright, airy
+      crystalGain.gain.setValueAtTime(0, ctx.currentTime);
+      crystalGain.gain.linearRampToValueAtTime(0.004, ctx.currentTime + fadeTime);
+      crystal.connect(crystalGain);
+      crystalGain.connect(ctx.destination);
+      crystal.start();
+      this.ambientNodes.push(crystal);
+      this.ambientGains.push(crystalGain);
 
-      // Layer 4: Air ventilation (filtered white noise)
+      // Layer 4: Soft high-pass filtered noise — gentle air circulation
       const noiseBuffer = this.createNoiseBuffer(ctx);
       const noise = ctx.createBufferSource();
       noise.buffer = noiseBuffer;
       noise.loop = true;
       const noiseFilter = ctx.createBiquadFilter();
-      noiseFilter.type = "bandpass";
-      noiseFilter.frequency.value = 800;
-      noiseFilter.Q.value = 0.5;
+      noiseFilter.type = "highpass";
+      noiseFilter.frequency.value = 2000;
+      noiseFilter.Q.value = 0.3;
       const noiseGain = ctx.createGain();
       noiseGain.gain.setValueAtTime(0, ctx.currentTime);
-      noiseGain.gain.linearRampToValueAtTime(0.008, ctx.currentTime + fadeTime);
+      noiseGain.gain.linearRampToValueAtTime(0.004, ctx.currentTime + fadeTime);
       noise.connect(noiseFilter);
       noiseFilter.connect(noiseGain);
       noiseGain.connect(ctx.destination);

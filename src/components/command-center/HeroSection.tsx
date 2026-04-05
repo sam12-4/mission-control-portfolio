@@ -52,7 +52,7 @@ export function HeroSection() {
 
       {/* Bottom callsign */}
       <motion.div
-        className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-20 text-center"
+        className="absolute bottom-4 md:bottom-12 lg:bottom-16 left-1/2 -translate-x-1/2 z-20 text-center"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.5, duration: 0.6 }}

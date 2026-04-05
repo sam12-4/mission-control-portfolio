@@ -26,5 +26,13 @@ export function useSound() {
     listeners.forEach((cb) => cb());
   }, []);
 
-  return { play, muted, toggleMute };
+  const startAmbient = useCallback(() => {
+    audioEngine.startAmbient();
+  }, []);
+
+  const stopAmbient = useCallback(() => {
+    audioEngine.stopAmbient();
+  }, []);
+
+  return { play, muted, toggleMute, startAmbient, stopAmbient };
 }

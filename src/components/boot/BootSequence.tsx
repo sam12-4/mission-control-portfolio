@@ -17,6 +17,7 @@ export function BootSequence() {
   const completeBoot = useCallback(() => {
     setPhase("completing");
     audioEngine.play("bootComplete");
+    audioEngine.startAmbient();
     setTimeout(() => {
       setPhase("done");
       sessionStorage.setItem("bootComplete", "true");
@@ -30,6 +31,8 @@ export function BootSequence() {
   useEffect(() => {
     if (sessionStorage.getItem("bootComplete") === "true") {
       dispatch({ type: "BOOT_COMPLETE" });
+      // Start ambient for returning visitors (will only play after first interaction)
+      setTimeout(() => audioEngine.startAmbient(), 1000);
       return;
     }
 

@@ -3,13 +3,16 @@
 import { useSound } from "@/hooks/useSound";
 
 export function MuteToggle() {
-  const { muted, toggleMute, play } = useSound();
+  const { muted, toggleMute, play, startAmbient } = useSound();
 
   function handleClick() {
     toggleMute();
     if (muted) {
-      // Was muted, now unmuted — play a confirmation beep
-      setTimeout(() => play("select"), 50);
+      // Was muted, now unmuted — play confirmation beep and restart ambient
+      setTimeout(() => {
+        play("select");
+        startAmbient();
+      }, 50);
     }
   }
 

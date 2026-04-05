@@ -14,6 +14,9 @@ class AudioEngine {
   private ctx: AudioContext | null = null;
   private muted: boolean = false;
   private bootPitch = 0;
+  private ambientNodes: (OscillatorNode | AudioBufferSourceNode)[] = [];
+  private ambientGains: GainNode[] = [];
+  private ambientRunning = false;
 
   constructor() {
     if (typeof window !== "undefined") {
@@ -44,6 +47,9 @@ class AudioEngine {
     this.muted = !this.muted;
     if (typeof window !== "undefined") {
       localStorage.setItem("mc-sound-muted", String(this.muted));
+    }
+    if (this.muted) {
+      this.stopAmbient();
     }
     return this.muted;
   }
@@ -206,6 +212,117 @@ class AudioEngine {
 
   resetBootPitch(): void {
     this.bootPitch = 0;
+  }
+
+  startAmbient(): void {
+    if (this.ambientRunning || this.muted) return;
+
+    try {
+      const ctx = this.getContext();
+      this.ambientRunning = true;
+
+      const fadeTime = 3;
+
+      // Layer 1: Engine drone (60Hz sine)
+      const drone = ctx.createOscillator();
+      const droneGain = ctx.createGain();
+      drone.type = "sine";
+      drone.frequency.value = 60;
+      droneGain.gain.setValueAtTime(0, ctx.currentTime);
+      droneGain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + fadeTime);
+      drone.connect(droneGain);
+      droneGain.connect(ctx.destination);
+      drone.start();
+      this.ambientNodes.push(drone);
+      this.ambientGains.push(droneGain);
+
+      // Layer 2: Detuned harmonic (60.7Hz — creates slow beating)
+      const detuned = ctx.createOscillator();
+      const detunedGain = ctx.createGain();
+      detuned.type = "sine";
+      detuned.frequency.value = 60.7;
+      detunedGain.gain.setValueAtTime(0, ctx.currentTime);
+      detunedGain.gain.linearRampToValueAtTime(0.03, ctx.currentTime + fadeTime);
+      detuned.connect(detunedGain);
+      detunedGain.connect(ctx.destination);
+      detuned.start();
+      this.ambientNodes.push(detuned);
+      this.ambientGains.push(detunedGain);
+
+      // Layer 3: Hull resonance (120Hz triangle)
+      const hull = ctx.createOscillator();
+      const hullGain = ctx.createGain();
+      hull.type = "triangle";
+      hull.frequency.value = 120;
+      hullGain.gain.setValueAtTime(0, ctx.currentTime);
+      hullGain.gain.linearRampToValueAtTime(0.015, ctx.currentTime + fadeTime);
+      hull.connect(hullGain);
+      hullGain.connect(ctx.destination);
+      hull.start();
+      this.ambientNodes.push(hull);
+      this.ambientGains.push(hullGain);
+
+      // Layer 4: Air ventilation (filtered white noise)
+      const noiseBuffer = this.createNoiseBuffer(ctx);
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      noise.loop = true;
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = "bandpass";
+      noiseFilter.frequency.value = 800;
+      noiseFilter.Q.value = 0.5;
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0, ctx.currentTime);
+      noiseGain.gain.linearRampToValueAtTime(0.008, ctx.currentTime + fadeTime);
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(ctx.destination);
+      noise.start();
+      this.ambientNodes.push(noise);
+      this.ambientGains.push(noiseGain);
+    } catch {
+      this.ambientRunning = false;
+    }
+  }
+
+  stopAmbient(): void {
+    if (!this.ambientRunning) return;
+
+    const ctx = this.ctx;
+    if (!ctx) return;
+
+    // Fade out over 1 second
+    this.ambientGains.forEach((gain) => {
+      try {
+        gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 1);
+      } catch {
+        // Node may already be disconnected
+      }
+    });
+
+    // Stop and disconnect after fade
+    setTimeout(() => {
+      this.ambientNodes.forEach((node) => {
+        try { node.stop(); } catch { /* already stopped */ }
+        try { node.disconnect(); } catch { /* already disconnected */ }
+      });
+      this.ambientGains.forEach((gain) => {
+        try { gain.disconnect(); } catch { /* already disconnected */ }
+      });
+      this.ambientNodes = [];
+      this.ambientGains = [];
+      this.ambientRunning = false;
+    }, 1100);
+  }
+
+  private createNoiseBuffer(ctx: AudioContext): AudioBuffer {
+    const bufferSize = ctx.sampleRate * 2; // 2 seconds
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    return buffer;
   }
 }
 

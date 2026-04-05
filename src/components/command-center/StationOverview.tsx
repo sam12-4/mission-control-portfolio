@@ -8,6 +8,7 @@ import { StatusIndicator } from "@/components/hud/StatusIndicator";
 import { missions } from "@/data/missions";
 import { systems } from "@/data/systems";
 import { profile } from "@/data/profile";
+import { audioEngine } from "@/lib/audio-engine";
 
 const subsystems = [
   {
@@ -92,7 +93,7 @@ export function StationOverview() {
             viewport={{ once: true, margin: "-50px" }}
             transition={{ delay: i * 0.1, duration: 0.5 }}
           >
-            <Link href={sub.href}>
+            <Link href={sub.href} onClick={() => audioEngine.play("navClick")}>
               <div className="border border-cyan/15 bg-panel/20 backdrop-blur-sm p-3 md:p-5 hover:border-cyan/40 hover:bg-panel/40 transition-all duration-300 group cursor-pointer h-full">
                 {/* Top row */}
                 <div className="flex items-center justify-between mb-3">

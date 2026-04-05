@@ -19,14 +19,24 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
         : "text-purple";
 
   return (
-    <motion.div
-      className="fixed inset-y-0 right-0 z-40 w-full max-w-md bg-deep-space/95 backdrop-blur-md border-l border-cyan/20 overflow-y-auto"
-      initial={{ x: "100%" }}
-      animate={{ x: 0 }}
-      exit={{ x: "100%" }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-    >
-      <div className="p-6">
+    <>
+      {/* Backdrop */}
+      <motion.div
+        className="fixed inset-0 z-40 bg-void/60 backdrop-blur-sm"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={onClose}
+      />
+      {/* Panel */}
+      <motion.div
+        className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-deep-space border-l border-cyan/20 overflow-y-auto"
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      >
+        <div className="p-6">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -101,5 +111,6 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
         </div>
       </div>
     </motion.div>
+    </>
   );
 }

@@ -63,14 +63,18 @@ export function BootSequence() {
     return () => lineTimers.forEach(clearTimeout);
   }, [dispatch, completeBoot]);
 
-  // Skip on click or keypress
+  // Skip on key press, tap, or click (pointerdown covers touch + mouse)
   useEffect(() => {
     function handleSkip() {
       completeBoot();
     }
 
     window.addEventListener("keydown", handleSkip);
-    return () => window.removeEventListener("keydown", handleSkip);
+    window.addEventListener("pointerdown", handleSkip);
+    return () => {
+      window.removeEventListener("keydown", handleSkip);
+      window.removeEventListener("pointerdown", handleSkip);
+    };
   }, [completeBoot]);
 
   return (
@@ -130,7 +134,7 @@ export function BootSequence() {
               transition={{ delay: 2 }}
             >
               <span className="text-[10px] font-mono text-text-dim tracking-wider">
-                PRESS ANY KEY TO SKIP
+                TAP OR PRESS ANY KEY TO SKIP
               </span>
             </motion.div>
           </div>

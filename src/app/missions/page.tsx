@@ -8,12 +8,14 @@ import { MissionBrief } from "@/components/missions/MissionBrief";
 import { MissionFilter } from "@/components/missions/MissionFilter";
 import { MissionCard } from "@/components/missions/MissionCard";
 import type { Mission } from "@/types/mission";
-import { useIsMobile } from "@/hooks/useMediaQuery";
+import { useIsDesktop } from "@/hooks/useMediaQuery";
 
 export default function MissionsPage() {
   const [selectedMission, setSelectedMission] = useState<Mission | null>(null);
   const [filter, setFilter] = useState("all");
-  const isMobile = useIsMobile();
+  // Radar shares the 2-column layout, which only exists at lg+; on tablet it
+  // would render oversized in a single column, so gate it on desktop.
+  const isDesktop = useIsDesktop();
 
   const filteredMissions =
     filter === "all"
@@ -46,7 +48,7 @@ export default function MissionsPage() {
       {/* Main content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl">
         {/* Radar / Card grid */}
-        {!isMobile ? (
+        {isDesktop ? (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}

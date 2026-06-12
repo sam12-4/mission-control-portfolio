@@ -2,12 +2,13 @@
 
 import { motion } from "framer-motion";
 import { StatusIndicator } from "@/components/hud/StatusIndicator";
+import { profile } from "@/data/profile";
 
 const panels = [
   {
     id: "coords",
     label: "COORDINATES",
-    value: "47.6062\u00b0 N, 122.3321\u00b0 W",
+    value: profile.coordinates,
     position: "top-20 right-8",
     delay: 0.2,
   },

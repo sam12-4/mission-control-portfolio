@@ -25,7 +25,7 @@ export function MissionFilter({ filter, onFilterChange }: MissionFilterProps) {
           className="relative"
         >
           <span
-            className={`text-[10px] font-mono tracking-[0.15em] px-3 py-1.5 border transition-all duration-300 ${
+            className={`inline-block text-[10px] font-mono tracking-[0.15em] px-3.5 py-2.5 border transition-all duration-300 ${
               filter === f.id
                 ? "text-cyan border-cyan/50 bg-cyan/10"
                 : "text-text-dim border-text-dim/20 hover:border-text-dim/40 hover:text-text"

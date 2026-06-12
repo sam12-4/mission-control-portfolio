@@ -34,7 +34,7 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
     <>
       {/* Backdrop */}
       <motion.div
-        className="fixed inset-0 z-40 bg-void/60 backdrop-blur-sm"
+        className="fixed inset-0 z-[55] bg-void/60 backdrop-blur-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -42,21 +42,32 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
       />
       {/* Panel */}
       <motion.div
-        className="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-deep-space border-l border-cyan/20 overflow-y-auto"
+        className="fixed inset-y-0 right-0 z-[60] w-full max-w-md bg-deep-space border-l border-cyan/20 flex flex-col"
         initial={{ x: "100%" }}
         animate={{ x: 0 }}
         exit={{ x: "100%" }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="p-6 pt-14">
-        {/* Close button */}
-        <button
-          onClick={handleClose}
-          className="absolute top-4 right-4 text-text-dim hover:text-cyan text-xs font-mono tracking-wider"
-        >
-          [CLOSE]
-        </button>
+        {/* Sticky header with prominent close — always reachable on mobile */}
+        <div className="flex items-center justify-between gap-3 h-12 px-4 border-b border-cyan/20 bg-deep-space/95 backdrop-blur-sm shrink-0">
+          <span className="text-[10px] font-mono text-cyan/70 tracking-[0.2em]">
+            MISSION BRIEF
+          </span>
+          <button
+            onClick={handleClose}
+            aria-label="Close mission brief"
+            className="flex items-center gap-2 h-10 px-3 -mr-2 text-text-dim hover:text-cyan transition-colors"
+          >
+            <span className="text-[10px] font-mono tracking-wider">CLOSE</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
 
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto p-6">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">

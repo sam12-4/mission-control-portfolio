@@ -13,7 +13,7 @@ export function MuteToggle() {
   return (
     <button
       onClick={handleClick}
-      className={`p-1 transition-colors ${
+      className={`flex items-center justify-center h-9 w-9 -mx-1 transition-colors ${
         muted ? "text-text-dim/40" : "text-cyan"
       }`}
       aria-label={muted ? "Unmute sounds" : "Mute sounds"}

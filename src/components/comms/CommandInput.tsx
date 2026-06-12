@@ -19,8 +19,10 @@ export function CommandInput({
   type = "text",
   required = false,
 }: CommandInputProps) {
+  // text-base (16px) on mobile prevents iOS Safari from auto-zooming on focus;
+  // restores the compact 12px terminal look from md up.
   const baseClasses =
-    "w-full bg-transparent text-text font-mono text-xs outline-none placeholder:text-text-dim/30";
+    "w-full bg-transparent text-text font-mono text-base md:text-xs outline-none placeholder:text-text-dim/30";
 
   return (
     <motion.div

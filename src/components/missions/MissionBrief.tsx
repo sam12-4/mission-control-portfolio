@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import type { Mission } from "@/types/mission";
 import { DataPanel } from "@/components/ui/DataPanel";
@@ -98,13 +99,30 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
           </div>
         </DataPanel>
 
-        {/* Image placeholder */}
+        {/* Visual intel */}
         <DataPanel title="VISUAL INTEL" className="mb-6">
-          <div className="aspect-video bg-panel border border-cyan/10 flex items-center justify-center">
-            <span className="text-[10px] font-mono text-text-dim/40">
-              SCREENSHOT PENDING
-            </span>
-          </div>
+          {mission.images.length > 0 ? (
+            <div className="relative aspect-video bg-panel border border-cyan/10 overflow-hidden">
+              <Image
+                src={mission.images[0]}
+                alt={`${mission.codename} screenshot`}
+                fill
+                sizes="(max-width: 768px) 100vw, 28rem"
+                className="object-cover object-top"
+              />
+              {/* HUD corner accents */}
+              <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-cyan/50" />
+              <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-cyan/50" />
+              <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-cyan/50" />
+              <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-cyan/50" />
+            </div>
+          ) : (
+            <div className="aspect-video bg-panel border border-cyan/10 flex items-center justify-center">
+              <span className="text-[10px] font-mono text-text-dim/40">
+                SCREENSHOT PENDING
+              </span>
+            </div>
+          )}
         </DataPanel>
 
         {/* Actions */}

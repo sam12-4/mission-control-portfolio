@@ -11,7 +11,7 @@ export const missions: Mission[] = [
     techDeployed: ["Vue.js", "PHP", "Laravel", "Flutter", "Python", "Docker"],
     category: "fullstack",
     date: "2024 — Present",
-    images: ["/images/projects/app.zytrack.ch_timesheets_tracker.png"],
+    images: ["/images/projects/app.zytrack.ch_absence-time-management.png"],
     liveUrl: "https://app.zytrack.ch/",
     featured: true,
     coordinates: { x: 0.7, y: 0.3 },

@@ -128,9 +128,49 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
               <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-cyan/50" />
             </div>
           ) : (
-            <div className="aspect-video bg-panel border border-cyan/10 flex items-center justify-center">
-              <span className="text-[10px] font-mono text-text-dim/40">
-                SCREENSHOT PENDING
+            <div className="relative aspect-video bg-void border border-cyan/10 overflow-hidden flex flex-col items-center justify-center gap-2.5">
+              {/* CRT scanline texture */}
+              <div
+                className="absolute inset-0 opacity-20 pointer-events-none"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,240,255,0.22) 2px 3px)",
+                }}
+              />
+              {/* Sweeping scan line */}
+              <div
+                className="absolute left-0 w-full h-px bg-cyan/40 pointer-events-none"
+                style={{ animation: "scan-feed 4s linear infinite" }}
+              />
+              {/* No-signal glyph */}
+              <svg
+                width="30"
+                height="30"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-cyan/40 relative"
+              >
+                <rect x="2" y="4" width="20" height="13" rx="1" />
+                <path d="M8 21h8M12 17v4" />
+                <path d="M5 11h2.5l1.5-2.5L11 14l2-4 1 1.5h4.5" />
+              </svg>
+              <div className="relative flex items-center gap-2">
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-amber"
+                  style={{ animation: "pulse-glow 1.5s ease-in-out infinite" }}
+                />
+                <span className="text-[10px] font-mono text-cyan/50 tracking-[0.3em]">
+                  NO VISUAL FEED
+                </span>
+              </div>
+              <span className="relative text-[8px] font-mono text-text-dim/40 tracking-[0.15em]">
+                {mission.repoUrl
+                  ? "ACCESS SOURCE FOR SCHEMATICS"
+                  : "TELEMETRY UNAVAILABLE"}
               </span>
             </div>
           )}

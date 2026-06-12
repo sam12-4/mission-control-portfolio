@@ -113,6 +113,14 @@ body {
   100% { clip-path: inset(0 0 0 0); }
 }
 
+/* Contained scan sweep — used by the "no visual feed" panel */
+@keyframes scan-feed {
+  0% { top: -5%; opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { top: 105%; opacity: 0; }
+}
+
 /* Utility classes */
 .text-glow-cyan {
   text-shadow: 0 0 10px var(--color-cyan-glow), 0 0 20px var(--color-cyan-glow);

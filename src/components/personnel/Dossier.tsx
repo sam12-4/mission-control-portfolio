@@ -81,6 +81,27 @@ export function Dossier() {
                   </p>
                 </div>
               </div>
+
+              {/* Resume / dossier download */}
+              <a
+                href={profile.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                download
+                className="group relative mt-4 flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-cyan/50 text-cyan text-[11px] font-mono tracking-[0.15em] uppercase hover:bg-cyan/10 hover:border-cyan hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all duration-300"
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                Download Dossier
+                {/* Corner accents */}
+                <span className="absolute top-0 left-0 w-2 h-2 border-t border-l border-current" />
+                <span className="absolute top-0 right-0 w-2 h-2 border-t border-r border-current" />
+                <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-current" />
+                <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-current" />
+              </a>
             </DataPanel>
           </motion.div>
 

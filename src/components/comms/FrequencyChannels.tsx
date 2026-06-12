@@ -41,6 +41,22 @@ export function FrequencyChannels() {
           </span>
         </motion.a>
       ))}
+
+      {/* Direct line — the literal email address, visible and copyable */}
+      <motion.a
+        href={`mailto:${profile.email}`}
+        className="block mt-3 px-3 py-2.5 border border-cyan/10 bg-panel/20 hover:border-cyan/30 hover:bg-panel/40 transition-all duration-300 group"
+        initial={{ opacity: 0, x: -10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: channels.length * 0.1, duration: 0.3 }}
+      >
+        <span className="text-[9px] font-mono text-cyan/40 tracking-[0.2em]">
+          DIRECT LINE
+        </span>
+        <div className="text-[11px] font-mono text-text group-hover:text-cyan tracking-wider mt-1 break-all select-all transition-colors">
+          {profile.email}
+        </div>
+      </motion.a>
     </div>
   );
 }

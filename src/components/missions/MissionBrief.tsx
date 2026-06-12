@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Mission } from "@/types/mission";
 import { DataPanel } from "@/components/ui/DataPanel";
 import { HudButton } from "@/components/ui/HudButton";
@@ -14,6 +14,30 @@ interface MissionBriefProps {
 }
 
 export function MissionBrief({ mission, onClose }: MissionBriefProps) {
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  function openLightbox() {
+    audioEngine.play("select");
+    setLightboxOpen(true);
+  }
+  function closeLightbox() {
+    audioEngine.play("panelClose");
+    setLightboxOpen(false);
+  }
+
+  // ESC closes the lightbox (without closing the whole brief)
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        e.stopPropagation();
+        setLightboxOpen(false);
+      }
+    }
+    window.addEventListener("keydown", onKey, true);
+    return () => window.removeEventListener("keydown", onKey, true);
+  }, [lightboxOpen]);
+
   const statusColor =
     mission.status === "COMPLETE"
       ? "text-green"
@@ -113,20 +137,34 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
         {/* Visual intel */}
         <DataPanel title="VISUAL INTEL" className="mb-6">
           {mission.images.length > 0 ? (
-            <div className="relative aspect-video bg-panel border border-cyan/10 overflow-hidden">
+            <button
+              type="button"
+              onClick={openLightbox}
+              aria-label={`Expand ${mission.codename} screenshot`}
+              className="relative block w-full aspect-video bg-panel border border-cyan/10 overflow-hidden group cursor-zoom-in"
+            >
               <Image
                 src={mission.images[0]}
                 alt={`${mission.codename} screenshot`}
                 fill
                 sizes="(max-width: 768px) 100vw, 28rem"
-                className="object-cover object-top"
+                className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
               />
+              {/* Hover overlay + expand hint */}
+              <div className="absolute inset-0 flex items-center justify-center bg-void/0 group-hover:bg-void/40 transition-colors duration-300">
+                <span className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 border border-cyan/40 bg-void/70 px-2.5 py-1.5 text-[9px] font-mono text-cyan tracking-[0.2em]">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+                  </svg>
+                  EXPAND
+                </span>
+              </div>
               {/* HUD corner accents */}
               <div className="absolute top-0 left-0 w-3 h-3 border-t border-l border-cyan/50" />
               <div className="absolute top-0 right-0 w-3 h-3 border-t border-r border-cyan/50" />
               <div className="absolute bottom-0 left-0 w-3 h-3 border-b border-l border-cyan/50" />
               <div className="absolute bottom-0 right-0 w-3 h-3 border-b border-r border-cyan/50" />
-            </div>
+            </button>
           ) : (
             <div className="relative aspect-video bg-void border border-cyan/10 overflow-hidden flex flex-col items-center justify-center gap-2.5">
               {/* CRT scanline texture */}
@@ -191,6 +229,58 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
         </div>
       </div>
     </motion.div>
+
+      {/* Fullscreen image lightbox */}
+      <AnimatePresence>
+        {lightboxOpen && mission.images.length > 0 && (
+          <motion.div
+            className="fixed inset-0 z-[70] bg-void/90 backdrop-blur-md flex flex-col"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={closeLightbox}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center justify-between gap-3 h-12 px-4 shrink-0 border-b border-cyan/20 bg-deep-space/80"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-[10px] font-mono text-cyan/70 tracking-[0.2em] truncate">
+                {mission.codename} <span className="text-text-dim/40">// VISUAL INTEL</span>
+              </span>
+              <button
+                onClick={closeLightbox}
+                aria-label="Close image"
+                className="flex items-center gap-2 h-10 px-3 -mr-2 text-text-dim hover:text-cyan transition-colors"
+              >
+                <span className="text-[10px] font-mono tracking-wider">CLOSE</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+            {/* Scrollable full screenshot */}
+            <div className="flex-1 overflow-auto p-3 sm:p-6">
+              <motion.div
+                className="mx-auto w-full max-w-4xl"
+                initial={{ scale: 0.97, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.97, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={mission.images[0]}
+                  alt={`${mission.codename} full screenshot`}
+                  className="w-full h-auto border border-cyan/20"
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }

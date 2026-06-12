@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Sameer Hussain — Mission Control">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.4" result="b" />
+      <feMerge>
+        <feMergeNode in="b" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Panel background (void) with faint cyan border -->
+  <rect x="2" y="2" width="60" height="60" rx="11"
+        fill="#0a0a14" stroke="#00f0ff" stroke-opacity="0.22" stroke-width="1.5" />
+
+  <!-- HUD corner brackets (matches the site's CornerElements motif) -->
+  <g stroke="#00f0ff" stroke-width="2" fill="none" stroke-opacity="0.85" stroke-linecap="round">
+    <path d="M8 15 V8 H15" />
+    <path d="M49 8 H56 V15" />
+    <path d="M56 49 V56 H49" />
+    <path d="M15 56 H8 V49" />
+  </g>
+
+  <!-- Geometric "S" monogram -->
+  <path d="M46 18 H23 V31 H43 V46 H19"
+        fill="none" stroke="#00f0ff" stroke-width="7"
+        stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)" />
+</svg>

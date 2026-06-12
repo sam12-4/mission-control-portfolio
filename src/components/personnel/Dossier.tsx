@@ -1,7 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { profile } from "@/data/profile";
 import { systems } from "@/data/systems";
 import { DataPanel } from "@/components/ui/DataPanel";
@@ -10,6 +11,18 @@ import { TypewriterText } from "./TypewriterText";
 import { SkillBar } from "./SkillBar";
 
 export function Dossier() {
+  const [previewOpen, setPreviewOpen] = useState(false);
+
+  // ESC closes the resume preview
+  useEffect(() => {
+    if (!previewOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setPreviewOpen(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [previewOpen]);
+
   return (
     <div className="min-h-screen px-4 md:px-8 py-12">
       {/* Header */}
@@ -82,26 +95,38 @@ export function Dossier() {
                 </div>
               </div>
 
-              {/* Resume / dossier download */}
-              <a
-                href={profile.resumeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                download
-                className="group relative mt-4 flex items-center justify-center gap-2 w-full px-4 py-2.5 border border-cyan/50 text-cyan text-[11px] font-mono tracking-[0.15em] uppercase hover:bg-cyan/10 hover:border-cyan hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all duration-300"
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                Download Dossier
-                {/* Corner accents */}
-                <span className="absolute top-0 left-0 w-2 h-2 border-t border-l border-current" />
-                <span className="absolute top-0 right-0 w-2 h-2 border-t border-r border-current" />
-                <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-current" />
-                <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-current" />
-              </a>
+              {/* Resume / dossier actions */}
+              <div className="mt-4 flex gap-2.5">
+                {/* View — opens in-page preview */}
+                <button
+                  type="button"
+                  onClick={() => setPreviewOpen(true)}
+                  className="group relative flex-1 flex items-center justify-center gap-2 px-3 py-2.5 border border-cyan/50 text-cyan text-[11px] font-mono tracking-[0.15em] uppercase hover:bg-cyan/10 hover:border-cyan hover:shadow-[0_0_15px_rgba(0,240,255,0.2)] transition-all duration-300"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                  View
+                  <span className="absolute top-0 left-0 w-2 h-2 border-t border-l border-current" />
+                  <span className="absolute top-0 right-0 w-2 h-2 border-t border-r border-current" />
+                  <span className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-current" />
+                  <span className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-current" />
+                </button>
+                {/* Download */}
+                <a
+                  href={profile.resumeUrl}
+                  download
+                  className="group relative flex-1 flex items-center justify-center gap-2 px-3 py-2.5 border border-text-dim/30 text-text-dim text-[11px] font-mono tracking-[0.15em] uppercase hover:text-cyan hover:border-cyan/50 transition-all duration-300"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                  Download
+                </a>
+              </div>
             </DataPanel>
           </motion.div>
 
@@ -167,6 +192,73 @@ export function Dossier() {
           </DataPanel>
         </motion.div>
       </div>
+
+      {/* Resume preview modal */}
+      <AnimatePresence>
+        {previewOpen && (
+          <motion.div
+            className="fixed inset-0 z-[70] bg-void/90 backdrop-blur-md flex flex-col"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setPreviewOpen(false)}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center justify-between gap-3 h-12 px-4 shrink-0 border-b border-cyan/20 bg-deep-space/80"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="text-[10px] font-mono text-cyan/70 tracking-[0.2em] truncate">
+                {profile.name.toUpperCase()} <span className="text-text-dim/40">// DOSSIER</span>
+              </span>
+              <div className="flex items-center gap-1">
+                <a
+                  href={profile.resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 h-9 px-2.5 text-text-dim hover:text-cyan text-[10px] font-mono tracking-wider transition-colors"
+                >
+                  OPEN
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  </svg>
+                </a>
+                <a
+                  href={profile.resumeUrl}
+                  download
+                  aria-label="Download resume"
+                  className="flex items-center h-9 px-2.5 text-text-dim hover:text-cyan transition-colors"
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                </a>
+                <button
+                  onClick={() => setPreviewOpen(false)}
+                  aria-label="Close preview"
+                  className="flex items-center gap-2 h-10 px-3 -mr-1 text-text-dim hover:text-cyan transition-colors"
+                >
+                  <span className="text-[10px] font-mono tracking-wider">CLOSE</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+            {/* PDF preview */}
+            <div className="flex-1 overflow-hidden p-2 sm:p-4" onClick={(e) => e.stopPropagation()}>
+              <iframe
+                src={`${profile.resumeUrl}#view=FitH`}
+                title={`${profile.name} resume`}
+                className="w-full h-full bg-white border border-cyan/20"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

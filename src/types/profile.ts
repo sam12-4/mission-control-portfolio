@@ -10,6 +10,7 @@ export interface Profile {
   stationDesignation: string;
   coordinates: string;
   bio: string;
+  email: string;
   stats: Stat[];
   profileImage: string;
   resumeUrl: string;

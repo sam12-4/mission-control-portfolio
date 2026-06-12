@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { profile } from "@/data/profile";
 
 const channels = [
   { label: "GITHUB", frequency: "142.7 MHz", url: "https://github.com/sam12-4" },
   { label: "LINKEDIN", frequency: "88.3 MHz", url: "https://linkedin.com/in/sameer-hussain-75313023b" },
-  { label: "EMAIL", frequency: "67.9 MHz", url: "mailto:sameerh64h@gmail.com" },
+  { label: "EMAIL", frequency: "67.9 MHz", url: `mailto:${profile.email}` },
   { label: "DINNOVA AG", frequency: "104.1 MHz", url: "https://dinnova.io" },
 ];
 

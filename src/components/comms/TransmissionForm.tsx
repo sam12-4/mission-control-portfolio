@@ -8,6 +8,9 @@ import { audioEngine } from "@/lib/audio-engine";
 
 type FormStatus = "idle" | "sending" | "sent" | "error";
 
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
+
 export function TransmissionForm() {
   const [form, setForm] = useState({
     name: "",
@@ -17,24 +20,75 @@ export function TransmissionForm() {
   });
   const [status, setStatus] = useState<FormStatus>("idle");
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+
+    if (!ACCESS_KEY) {
+      console.error("Missing NEXT_PUBLIC_WEB3FORMS_KEY — contact form cannot send.");
+      setStatus("error");
+      audioEngine.play("error");
+      setTimeout(() => setStatus("idle"), 5000);
+      return;
+    }
+
+    // Honeypot: bots fill hidden fields; humans never see them.
+    const botField = (
+      e.currentTarget.elements.namedItem("botcheck") as HTMLInputElement | null
+    )?.checked;
+    if (botField) return;
+
     setStatus("sending");
     audioEngine.play("transmit");
 
-    // Simulate send — replace with actual API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setStatus("sent");
-    audioEngine.play("success");
+    try {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          name: form.name,
+          email: form.email,
+          subject: `[Portfolio] ${form.subject}`,
+          message: form.message,
+          from_name: "Mission Control Portfolio",
+        }),
+      });
 
-    setTimeout(() => {
-      setStatus("idle");
-      setForm({ name: "", email: "", subject: "", message: "" });
-    }, 4000);
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Transmission failed");
+      }
+
+      setStatus("sent");
+      audioEngine.play("success");
+
+      setTimeout(() => {
+        setStatus("idle");
+        setForm({ name: "", email: "", subject: "", message: "" });
+      }, 4000);
+    } catch (err) {
+      console.error("Contact form submission failed:", err);
+      setStatus("error");
+      audioEngine.play("error");
+      setTimeout(() => setStatus("idle"), 5000);
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Honeypot — hidden from humans, catches bots. Do not remove. */}
+      <input
+        type="checkbox"
+        name="botcheck"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="hidden"
+      />
       <CommandInput
         label="CALLSIGN"
         name="name"
@@ -112,6 +166,22 @@ export function TransmissionForm() {
                 TRANSMISSION SENT — AWAITING RESPONSE
               </span>
             </motion.div>
+          )}
+
+          {status === "error" && (
+            <motion.button
+              key="error"
+              type="submit"
+              className="flex w-full items-center gap-3 px-4 py-3 border border-red/40 bg-red/5 text-left hover:bg-red/10 transition-colors"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="w-2 h-2 bg-red rounded-full" />
+              <span className="text-[11px] font-mono text-red tracking-wider">
+                TRANSMISSION FAILED — SIGNAL LOST. RETRY?
+              </span>
+            </motion.button>
           )}
         </AnimatePresence>
       </div>

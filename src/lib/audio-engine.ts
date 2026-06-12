@@ -8,7 +8,8 @@ export type SoundName =
   | "radarPing"
   | "select"
   | "transmit"
-  | "success";
+  | "success"
+  | "error";
 
 class AudioEngine {
   private ctx: AudioContext | null = null;
@@ -105,6 +106,9 @@ class AudioEngine {
           break;
         case "success":
           this.playSuccess();
+          break;
+        case "error":
+          this.playError();
           break;
       }
     } catch {
@@ -230,6 +234,28 @@ class AudioEngine {
 
       osc.start(startTime);
       osc.stop(startTime + 0.15);
+    });
+  }
+
+  private playError(): void {
+    const ctx = this.getContext();
+
+    // Descending two-tone alert — signals failure
+    [400, 250].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      const startTime = ctx.currentTime + i * 0.14;
+
+      osc.type = "sawtooth";
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.08, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.18);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(startTime);
+      osc.stop(startTime + 0.18);
     });
   }
 

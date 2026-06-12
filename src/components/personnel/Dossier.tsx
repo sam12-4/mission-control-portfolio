@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { profile } from "@/data/profile";
 import { systems } from "@/data/systems";
 import { DataPanel } from "@/components/ui/DataPanel";
+import { Portal } from "@/components/ui/Portal";
 import { CountUp } from "@/components/ui/CountUp";
 import { TypewriterText } from "./TypewriterText";
 import { SkillBar } from "./SkillBar";
@@ -194,10 +195,11 @@ export function Dossier() {
       </div>
 
       {/* Resume preview modal */}
+      <Portal>
       <AnimatePresence>
         {previewOpen && (
           <motion.div
-            className="fixed inset-0 z-[70] bg-void/90 backdrop-blur-md flex flex-col"
+            className="fixed inset-0 z-[90] bg-void/90 backdrop-blur-md flex flex-col"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -259,6 +261,7 @@ export function Dossier() {
           </motion.div>
         )}
       </AnimatePresence>
+      </Portal>
     </div>
   );
 }

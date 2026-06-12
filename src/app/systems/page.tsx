@@ -6,6 +6,7 @@ import { systems } from "@/data/systems";
 import { TechModule } from "@/components/systems/TechModule";
 import { CircuitLines } from "@/components/systems/CircuitLines";
 import { DataPanel } from "@/components/ui/DataPanel";
+import { Portal } from "@/components/ui/Portal";
 import type { TechSystem } from "@/types/system";
 
 // Shared readout body — used in the desktop side panel and the mobile sheet.
@@ -90,7 +91,7 @@ function MobileReadoutSheet({
   onSelectConnected: (system: TechSystem) => void;
 }) {
   return (
-    <>
+    <Portal>
       <motion.div
         className="lg:hidden fixed inset-0 z-[55] bg-void/70 backdrop-blur-sm"
         initial={{ opacity: 0 }}
@@ -125,7 +126,7 @@ function MobileReadoutSheet({
           <SystemReadout system={system} onSelectConnected={onSelectConnected} />
         </div>
       </motion.div>
-    </>
+    </Portal>
   );
 }
 

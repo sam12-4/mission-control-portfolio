@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Mission } from "@/types/mission";
 import { DataPanel } from "@/components/ui/DataPanel";
 import { HudButton } from "@/components/ui/HudButton";
+import { Portal } from "@/components/ui/Portal";
 import { audioEngine } from "@/lib/audio-engine";
 
 interface MissionBriefProps {
@@ -55,7 +56,7 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
   }
 
   return (
-    <>
+    <Portal>
       {/* Backdrop */}
       <motion.div
         className="fixed inset-0 z-[55] bg-void/60 backdrop-blur-sm"
@@ -281,6 +282,6 @@ export function MissionBrief({ mission, onClose }: MissionBriefProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </Portal>
   );
 }
